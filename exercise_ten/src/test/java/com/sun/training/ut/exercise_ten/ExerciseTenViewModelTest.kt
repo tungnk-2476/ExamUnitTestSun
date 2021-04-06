@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.res.Resources
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.exercise_ten.R
+import com.sun.training.ut.exercise_ten.data.model.MemberClassType
+import com.sun.training.ut.exercise_ten.domain.business.DiscountBusiness
+import com.sun.training.ut.exercise_ten.domain.business.GiftBusiness
 import com.sun.training.ut.exercise_ten.ui.ExerciseTenViewModel
 import org.junit.Assert
 import org.junit.Before
@@ -233,7 +236,7 @@ class ExerciseTenViewModelTest {
     }
 
     @Test
-    fun validateTotal_withSilver_From3000_To4999() {
+    fun validateTotal_withSilver_From3001_To4999() {
         viewModel.updateMemberClassType(SILVER)
         viewModel.subTotal.value = "4000.0"
         viewModel.printInvoice()
@@ -244,7 +247,7 @@ class ExerciseTenViewModelTest {
     }
 
     @Test
-    fun validateTotal_withSilver_From5000_To9999() {
+    fun validateTotal_withSilver_From5001_To9999() {
         viewModel.updateMemberClassType(SILVER)
         viewModel.subTotal.value = "7000.0"
         viewModel.printInvoice()
@@ -277,7 +280,7 @@ class ExerciseTenViewModelTest {
     }
 
     @Test
-    fun validateTotal_withGold_From3000_To4999() {
+    fun validateTotal_withGold_From3001_To4999() {
         viewModel.updateMemberClassType(GOLD)
         viewModel.subTotal.value = "4000.0"
         viewModel.printInvoice()
@@ -288,7 +291,7 @@ class ExerciseTenViewModelTest {
     }
 
     @Test
-    fun validateTotal_withGold_From5000_To9999() {
+    fun validateTotal_withGold_From5001_To9999() {
         viewModel.updateMemberClassType(GOLD)
         viewModel.subTotal.value = "7000.0"
         viewModel.printInvoice()
@@ -321,7 +324,7 @@ class ExerciseTenViewModelTest {
     }
 
     @Test
-    fun validateTotal_withBlack_From3000_To4999() {
+    fun validateTotal_withBlack_From3001_To4999() {
         viewModel.updateMemberClassType(BLACK)
         viewModel.subTotal.value = "4000.0"
         viewModel.printInvoice()
@@ -332,7 +335,7 @@ class ExerciseTenViewModelTest {
     }
 
     @Test
-    fun validateTotal_withBlack_From5000_To9999() {
+    fun validateTotal_withBlack_From5001_To9999() {
         viewModel.updateMemberClassType(BLACK)
         viewModel.subTotal.value = "7000.0"
         viewModel.printInvoice()
@@ -365,7 +368,7 @@ class ExerciseTenViewModelTest {
     }
 
     @Test
-    fun validateTotal_withNoMember_From3000_To4999() {
+    fun validateTotal_withNoMember_From3001_To4999() {
         viewModel.updateMemberClassType(NO_MEMBER)
         viewModel.subTotal.value = "4000.0"
         viewModel.printInvoice()
@@ -376,7 +379,7 @@ class ExerciseTenViewModelTest {
     }
 
     @Test
-    fun validateTotal_withNoMember_From5000_To9999() {
+    fun validateTotal_withNoMember_From5001_To9999() {
         viewModel.updateMemberClassType(NO_MEMBER)
         viewModel.subTotal.value = "7000.0"
         viewModel.printInvoice()
@@ -395,6 +398,168 @@ class ExerciseTenViewModelTest {
         Assert.assertEquals(11000.0, viewModel.invoice.value?.subTotal)
         Assert.assertEquals(0.0, viewModel.invoice.value?.discount)
         Assert.assertEquals(11000.0, viewModel.invoice.value?.total)
+    }
+
+    //Test Function
+
+    @Test
+    fun discountCalculation_withNoMember_return0() {
+        viewModel.updateMemberClassType(NO_MEMBER)
+        val subTotal = viewModel.discountCalculation(2000.0)
+        Assert.assertEquals(0, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withBlack_withFrom10000() {
+        viewModel.updateMemberClassType(BLACK)
+        val subTotal = viewModel.discountCalculation(11000.0)
+        Assert.assertEquals(1650, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withBlack_withFrom5000() {
+        viewModel.updateMemberClassType(BLACK)
+        val subTotal = viewModel.discountCalculation(5000.0)
+        Assert.assertEquals(350, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withBlack_withFrom3000() {
+        viewModel.updateMemberClassType(BLACK)
+        val subTotal = viewModel.discountCalculation(3000.0)
+        Assert.assertEquals(150, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withGold_withFrom10000() {
+        viewModel.updateMemberClassType(GOLD)
+        val subTotal = viewModel.discountCalculation(11000.0)
+        Assert.assertEquals(1100, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withGold_withFrom5000() {
+        viewModel.updateMemberClassType(GOLD)
+        val subTotal = viewModel.discountCalculation(5000.0)
+        Assert.assertEquals(250, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withGold_withFrom3000() {
+        viewModel.updateMemberClassType(GOLD)
+        val subTotal = viewModel.discountCalculation(3000.0)
+        Assert.assertEquals(90, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withSilver_withFrom10000() {
+        viewModel.updateMemberClassType(SILVER)
+        val subTotal = viewModel.discountCalculation(11000.0)
+        Assert.assertEquals(440, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withSilver_withFrom5000() {
+        viewModel.updateMemberClassType(SILVER)
+        val subTotal = viewModel.discountCalculation(5000.0)
+        Assert.assertEquals(100, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withSilver_withFrom3000() {
+        viewModel.updateMemberClassType(SILVER)
+        val subTotal = viewModel.discountCalculation(3000.0)
+        Assert.assertEquals(30, subTotal.toInt())
+    }
+
+    @Test
+    fun discountCalculation_withUserNull() {
+        viewModel.user.value = null
+        val subTotal = viewModel.discountCalculation(3000.0)
+        Assert.assertEquals(0, subTotal.toInt())
+    }
+
+    @Test
+    fun giftAccepted_from0_to2999_returnFALSE() {
+        Assert.assertEquals(false, viewModel.giftAccepted(2000.0))
+    }
+
+    @Test
+    fun giftAccepted_with3000_returnFALSE() {
+        Assert.assertEquals(false, viewModel.giftAccepted(3000.0))
+    }
+
+    @Test
+    fun giftAccepted_from3001_to4999_returnFALSE() {
+        Assert.assertEquals(false, viewModel.giftAccepted(4000.0))
+    }
+
+    @Test
+    fun giftAccepted_with5000_returnTRUE() {
+        Assert.assertEquals(true, viewModel.giftAccepted(5000.0))
+    }
+
+    @Test
+    fun giftAccepted_from5001_to9999_returnFALSE() {
+        Assert.assertEquals(false, viewModel.giftAccepted(9000.0))
+    }
+
+    @Test
+    fun giftAccepted_with10000_returnTRUE() {
+        Assert.assertEquals(true, viewModel.giftAccepted(10000.0))
+    }
+
+    @Test
+    fun giftAccepted_withThan10000_returnFALSE() {
+        Assert.assertEquals(false, viewModel.giftAccepted(11000.0))
+    }
+
+    @Test
+    fun printInvoice_withSubtotalThan0() {
+        viewModel.updateMemberClassType(NO_MEMBER)
+        viewModel.subTotal.value = "3000.0"
+        viewModel.printInvoice()
+        Assert.assertEquals(1, viewModel.invoice.value?.invoiceId)
+        Assert.assertEquals(3000.0, viewModel.invoice.value?.subTotal)
+        Assert.assertEquals(0.0, viewModel.invoice.value?.discount)
+        Assert.assertEquals(false, viewModel.invoice.value?.giftAccepted)
+        Assert.assertEquals(3000.0, viewModel.invoice.value?.total)
+    }
+
+    @Test
+    fun printInvoice_withSubtotalNull() {
+        viewModel.updateMemberClassType(NO_MEMBER)
+        viewModel.subTotal.value = null
+        viewModel.printInvoice()
+        Assert.assertEquals(1, viewModel.invoice.value?.invoiceId)
+        Assert.assertEquals(0.0, viewModel.invoice.value?.subTotal)
+        Assert.assertEquals(0.0, viewModel.invoice.value?.discount)
+        Assert.assertEquals(false, viewModel.invoice.value?.giftAccepted)
+        Assert.assertEquals(0.0, viewModel.invoice.value?.total)
+    }
+
+    @Test
+    fun validateUpdateMemberClassType_withBlack_returnBLACK_CLASS() {
+        viewModel.updateMemberClassType(BLACK)
+        Assert.assertEquals(MemberClassType.BLACK_CLASS, viewModel.user.value?.classType)
+    }
+
+    @Test
+    fun validateUpdateMemberClassType_withGold_returnGOLD_CLASS() {
+        viewModel.updateMemberClassType(GOLD)
+        Assert.assertEquals(MemberClassType.GOLD_CLASS, viewModel.user.value?.classType)
+    }
+
+    @Test
+    fun validateUpdateMemberClassType_withSilver_returnSILVER_CLASS() {
+        viewModel.updateMemberClassType(SILVER)
+        Assert.assertEquals(MemberClassType.SILVER_CLASS, viewModel.user.value?.classType)
+    }
+
+    @Test
+    fun validateUpdateMemberClassType_withNoMember_returnUNKNOWN_CLASS() {
+        viewModel.updateMemberClassType(NO_MEMBER)
+        Assert.assertEquals(MemberClassType.UNKNOWN_CLASS, viewModel.user.value?.classType)
     }
 
     companion object {
